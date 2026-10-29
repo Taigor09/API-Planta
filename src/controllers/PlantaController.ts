@@ -32,7 +32,42 @@ export const createPlanta = async (req = request, res = response) => {
 
 export const findAllPlantas = async (req = request, res = response) => {
     try {
-        const plantas = await PlantaRepository.findAllPlantas();
+        const { luminosidade, petFriendly } = req.query;
+
+        // Se nenhum filtro foi enviado, retorna todas as plantas
+        if (luminosidade === undefined && petFriendly === undefined) {
+            const plantas = await PlantaRepository.findAllPlantas();
+            return res.status(200).json(plantas);
+        }
+
+        let filtroLuminosidade: Luminosidade | undefined = undefined;
+        let filtroPetFriendly: boolean | undefined = undefined;
+
+        // Valida e processa o filtro de luminosidade (se enviado)
+        if (luminosidade !== undefined) {
+            if (
+                typeof luminosidade !== "string" ||
+                !Object.values(Luminosidade).includes(luminosidade as Luminosidade)
+            ) {
+                return res.status(400).json({ message: "Filtro de luminosidade inválido" });
+            }
+            filtroLuminosidade = luminosidade as Luminosidade;
+        }
+
+        // Valida e processa o filtro petFriendly (se enviado)
+        if (petFriendly !== undefined) {
+            if (petFriendly !== 'true' && petFriendly !== 'false') {
+                return res.status(400).json({ message: "Filtro petFriendly inválido" });
+            }
+            filtroPetFriendly = petFriendly === 'true';
+        }
+
+        // Executa a busca passando os filtros disponíveis para o repositório
+        const plantas = await PlantaRepository.findAllPlantas(
+            filtroLuminosidade,
+            filtroPetFriendly
+        );
+
         return res.status(200).json(plantas);
     }
     catch(error) {

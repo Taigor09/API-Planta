@@ -1,5 +1,6 @@
-import { Prisma } from "@prisma/client";
+import { Luminosidade, Prisma } from "@prisma/client";
 import prisma from "@database";
+import { ObjectEnumValue } from "@prisma/client/runtime/library";
 
 
 export const createPlanta = async (data: Prisma.PlantaCreateInput) => {
@@ -8,7 +9,24 @@ export const createPlanta = async (data: Prisma.PlantaCreateInput) => {
     });
 };
 
-export const findAllPlantas = async () => {
+export const findAllPlantas = async (luminosidade?: Luminosidade, petFriendly?: boolean) => {
+    // filtro para procurar pela luminosidade
+    if (petFriendly !== undefined && luminosidade) {
+        return await prisma.planta.findMany({
+            where: {luminosidade: luminosidade, petFriendly: petFriendly}
+        })
+    }
+    if (luminosidade) {
+        return await prisma.planta.findMany({
+            where: {luminosidade: luminosidade}
+        })
+    }
+    if (petFriendly !== undefined) {
+        return await prisma.planta.findMany({
+            where: {petFriendly: petFriendly}
+        })
+    }
+
     return await prisma.planta.findMany()
 };
 
