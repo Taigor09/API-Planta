@@ -29,3 +29,95 @@ export const createPlanta = async (req = request, res = response) => {
         return res.status(500).json({message: "Erro ao criar planta"})
     }
 }
+
+export const findAllPlantas = async (req = request, res = response) => {
+    try {
+        const plantas = await PlantaRepository.findAllPlantas();
+        return res.status(200).json(plantas);
+    }
+    catch(error) {
+        console.error(error);
+        return res.status(500).json({message: "Erro ao buscar plantas"})
+    }
+}
+
+export const findPlantaById = async (req = request, res = response) => {
+    try {
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({message: "Id inválido"})
+        }
+
+        const planta = await PlantaRepository.findPlantaById(id);
+        
+        if (!planta) {
+            return res.status(404).json({message: "Planta não encontrada"})
+        }
+
+        return res.status(200).json(planta);
+    }
+    catch(error) {
+        console.error(error);
+        return res.status(500).json({message: "Erro ao buscar planta"})
+    }
+}
+
+export const updatePlanta = async (req = request, res = response) => {
+    try {
+        const id = Number(req.params.id);
+        
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({message: "Nenhum dado enviado para atualização"})
+        }
+        const {nome, especie, preco, estoque, petFriendly, regaACadaDias, luminosidade} = req.body
+
+        if ((typeof nome !== 'string' || nome.trim() === "") && nome !== undefined || (typeof especie !== 'string' || especie.trim() === "") && especie !== undefined || (typeof preco !== 'number' || !Number.isInteger(preco) || preco <= 0) && preco !== undefined || (typeof estoque !== 'number' || !Number.isInteger(estoque) || estoque < 0) && estoque !== undefined || (typeof regaACadaDias !== 'number' || !Number.isInteger(regaACadaDias) || regaACadaDias <= 0) && regaACadaDias !== undefined || typeof petFriendly !== 'boolean' && petFriendly !== undefined || (typeof luminosidade !== 'string' || !Object.values(Luminosidade).includes(luminosidade as Luminosidade)) && luminosidade !== undefined) {
+            return res.status(400).json({message: "Dado(s) inválidos"})
+        }
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({message: "Id inválido"})
+        }
+        const planta = await PlantaRepository.findPlantaById(id);
+        if (!planta) {
+            return res.status(404).json({message: "Planta não encontrada"})
+        }
+
+        const updatePlanta = await PlantaRepository.updatePlanta(id, {
+            nome: nome,
+            especie: especie,
+            preco: preco,
+            estoque: estoque,
+            petFriendly: petFriendly,
+            regaACadaDias: regaACadaDias,
+            luminosidade: luminosidade,
+        });
+
+        return res.status(200).json(updatePlanta);
+    }
+    catch(error) {
+        console.error(error);
+        return res.status(500).json({message: "Erro ao atualizar planta"})
+    }
+}
+
+export const deletePlanta = async (req = request, res = response) => {
+    try {
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({message: "Id inválido"})
+        }
+
+        const planta = await PlantaRepository.findPlantaById(id);
+        if (!planta) {
+            return res.status(404).json({message: "Planta não encontrada"})
+        }
+        await PlantaRepository.deletePlanta(id);
+        return res.status(204).send();
+    }
+    catch(error) {
+        console.error(error);
+        return res.status(500).json({message: "Erro ao deletar planta"})
+    }
+}
