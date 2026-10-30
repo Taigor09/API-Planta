@@ -1,6 +1,5 @@
 import { Luminosidade, Prisma } from "@prisma/client";
 import prisma from "@database";
-import { ObjectEnumValue } from "@prisma/client/runtime/library";
 
 
 export const createPlanta = async (data: Prisma.PlantaCreateInput) => {
@@ -10,7 +9,6 @@ export const createPlanta = async (data: Prisma.PlantaCreateInput) => {
 };
 
 export const findAllPlantas = async (luminosidade?: Luminosidade, petFriendly?: boolean) => {
-    // filtro para procurar pela luminosidade
     if (petFriendly !== undefined && luminosidade) {
         return await prisma.planta.findMany({
             where: {luminosidade: luminosidade, petFriendly: petFriendly}
@@ -48,10 +46,10 @@ export const deletePlanta = async (id: number) => {
         where: {id: id},
     });
 };
-// Função para vender plantas
+
 export const venderPlanta = async (id: number, quantidade: number) => {
     return await prisma.planta.updateMany({
-        where: { // Só será feito a venda se o estoque for maior que a quantidade solicitada
+        where: {
             id: id,
             estoque: {
                 gte: quantidade
@@ -62,7 +60,7 @@ export const venderPlanta = async (id: number, quantidade: number) => {
         }
     });
 }
-// Função para realizar a soma total de estoque e vendas
+
 export const totalVendas = async () => {
     const total = await prisma.planta.aggregate({
         _sum: {
@@ -78,5 +76,5 @@ export const totalVendas = async () => {
     const totalVendas = plantas.reduce((Acumulador, planta) => {
         return Acumulador + (planta.preco * planta.estoque);
     }, 0);
-    return {totalDeVasos: total._sum.estoque, valorTotalEmCentavos: totalVendas};
+    return {totalDeVasos: total._sum.estoque ?? 0, valorTotalEmCentavos: totalVendas};
 }

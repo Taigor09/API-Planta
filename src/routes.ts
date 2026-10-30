@@ -8,22 +8,18 @@ routes.get("/", (req, res) => {
   res.status(200).json({ message: "API do treinamento de CRUD do CITi 🚀" });
 });
 
-// CRUD de usuários
 routes.post("/users", UserController.createUser);
 routes.get("/users", UserController.readAllUsers);
 routes.get("/users/:id", UserController.readUserById);
 routes.patch("/users/:id", UserController.updateUser);
 routes.delete("/users/:id", UserController.deleteUser);
 
-// CRUD de plantas
 routes.post("/plantas", PlantaController.createPlanta);
 routes.get("/plantas", PlantaController.findAllPlantas);
 
-// Rotas específicas de plantas
 routes.get("/plantas/estoque/valor-total", PlantaController.valorTotalEstoque);
 routes.post("/plantas/:id/venda", PlantaController.vendePlanta);
 
-// Rotas dinâmicas de plantas
 routes.get("/plantas/:id", PlantaController.findPlantaById);
 routes.patch("/plantas/:id", PlantaController.updatePlanta);
 routes.delete("/plantas/:id", PlantaController.deletePlanta);

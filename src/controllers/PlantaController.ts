@@ -34,7 +34,6 @@ export const findAllPlantas = async (req = request, res = response) => {
     try {
         const { luminosidade, petFriendly } = req.query;
 
-        // Se nenhum filtro foi enviado, retorna todas as plantas
         if (luminosidade === undefined && petFriendly === undefined) {
             const plantas = await PlantaRepository.findAllPlantas();
             return res.status(200).json(plantas);
@@ -43,7 +42,6 @@ export const findAllPlantas = async (req = request, res = response) => {
         let filtroLuminosidade: Luminosidade | undefined = undefined;
         let filtroPetFriendly: boolean | undefined = undefined;
 
-        // Valida e processa o filtro de luminosidade (se enviado)
         if (luminosidade !== undefined) {
             if (
                 typeof luminosidade !== "string" ||
@@ -54,7 +52,6 @@ export const findAllPlantas = async (req = request, res = response) => {
             filtroLuminosidade = luminosidade as Luminosidade;
         }
 
-        // Valida e processa o filtro petFriendly (se enviado)
         if (petFriendly !== undefined) {
             if (petFriendly !== 'true' && petFriendly !== 'false') {
                 return res.status(400).json({ message: "Filtro petFriendly inválido" });
@@ -62,7 +59,6 @@ export const findAllPlantas = async (req = request, res = response) => {
             filtroPetFriendly = petFriendly === 'true';
         }
 
-        // Executa a busca passando os filtros disponíveis para o repositório
         const plantas = await PlantaRepository.findAllPlantas(
             filtroLuminosidade,
             filtroPetFriendly
@@ -191,7 +187,7 @@ export const vendePlanta = async (req = request, res = response) => {
         return res.status(500).json({message: "Erro ao vender planta"})
     }
 }
-// controller do total estoque
+
 export const valorTotalEstoque = async (req = request, res = response) => {
     try {
         const total = await PlantaRepository.totalVendas();
