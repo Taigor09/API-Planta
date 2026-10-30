@@ -32,11 +32,12 @@ export const createPlanta = async (req = request, res = response) => {
 
 export const findAllPlantas = async (req = request, res = response) => {
     try {
-        const { luminosidade, petFriendly, nome } = req.query;
+        const { luminosidade, petFriendly, nome, ordem } = req.query;
 
         let filtroLuminosidade: Luminosidade | undefined = undefined;
         let filtroPetFriendly: boolean | undefined = undefined;
         let filtroNome: string | undefined = undefined;
+        let filtroOrdem: "preco" | "nome" | undefined = undefined;
 
         if (luminosidade !== undefined) {
             if (
@@ -62,10 +63,18 @@ export const findAllPlantas = async (req = request, res = response) => {
             filtroNome = nome;
         }
 
+        if (ordem !== undefined) {
+            if (ordem !== "preco" && ordem !== "nome") {
+                return res.status(400).json({ message: "Filtro ordem inválido" });
+            }
+            filtroOrdem = ordem as "preco" | "nome";
+        }
+
         const plantas = await PlantaRepository.findAllPlantas(
             filtroLuminosidade,
             filtroPetFriendly,
             filtroNome,
+            filtroOrdem
         );
 
         return res.status(200).json(plantas);
