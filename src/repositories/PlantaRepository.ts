@@ -8,24 +8,23 @@ export const createPlanta = async (data: Prisma.PlantaCreateInput) => {
     });
 };
 
-export const findAllPlantas = async (luminosidade?: Luminosidade, petFriendly?: boolean) => {
-    if (petFriendly !== undefined && luminosidade) {
-        return await prisma.planta.findMany({
-            where: {luminosidade: luminosidade, petFriendly: petFriendly}
-        })
-    }
+export const findAllPlantas = async (luminosidade?: Luminosidade, petFriendly?: boolean, nome?: string) => {
+    const where: Prisma.PlantaWhereInput = {};
     if (luminosidade) {
-        return await prisma.planta.findMany({
-            where: {luminosidade: luminosidade}
-        })
-    }
-    if (petFriendly !== undefined) {
-        return await prisma.planta.findMany({
-            where: {petFriendly: petFriendly}
-        })
+        where.luminosidade = luminosidade;
     }
 
-    return await prisma.planta.findMany()
+    if (petFriendly !== undefined) {
+        where.petFriendly = petFriendly;
+    }
+
+    if (nome) {
+        where.nome = {
+            contains: nome,
+            mode: "insensitive"
+        }
+    }
+    return await prisma.planta.findMany({where})
 };
 
 export const findPlantaById = async (id: number) => {

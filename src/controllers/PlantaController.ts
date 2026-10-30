@@ -32,15 +32,11 @@ export const createPlanta = async (req = request, res = response) => {
 
 export const findAllPlantas = async (req = request, res = response) => {
     try {
-        const { luminosidade, petFriendly } = req.query;
-
-        if (luminosidade === undefined && petFriendly === undefined) {
-            const plantas = await PlantaRepository.findAllPlantas();
-            return res.status(200).json(plantas);
-        }
+        const { luminosidade, petFriendly, nome } = req.query;
 
         let filtroLuminosidade: Luminosidade | undefined = undefined;
         let filtroPetFriendly: boolean | undefined = undefined;
+        let filtroNome: string | undefined = undefined;
 
         if (luminosidade !== undefined) {
             if (
@@ -59,9 +55,17 @@ export const findAllPlantas = async (req = request, res = response) => {
             filtroPetFriendly = petFriendly === 'true';
         }
 
+        if (nome !== undefined) {
+            if (typeof nome !== "string") {
+                return res.status(400).json({ message: "Filtro nome inválido" })
+            }
+            filtroNome = nome;
+        }
+
         const plantas = await PlantaRepository.findAllPlantas(
             filtroLuminosidade,
-            filtroPetFriendly
+            filtroPetFriendly,
+            filtroNome,
         );
 
         return res.status(200).json(plantas);
