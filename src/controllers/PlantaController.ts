@@ -191,3 +191,14 @@ export const vendePlanta = async (req = request, res = response) => {
         return res.status(500).json({message: "Erro ao vender planta"})
     }
 }
+// controller do total estoque
+export const valorTotalEstoque = async (req = request, res = response) => {
+    try {
+        const total = await PlantaRepository.totalVendas();
+        return res.status(200).json(total);
+    }
+    catch(error) {
+        console.error(error);
+        return res.status(500).json({message: "Erro ao calcular total do estoque"})
+    }
+}

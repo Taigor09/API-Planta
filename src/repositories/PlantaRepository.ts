@@ -62,3 +62,21 @@ export const venderPlanta = async (id: number, quantidade: number) => {
         }
     });
 }
+// Função para realizar a soma total de estoque e vendas
+export const totalVendas = async () => {
+    const total = await prisma.planta.aggregate({
+        _sum: {
+            estoque: true
+        }
+    });
+    const plantas = await prisma.planta.findMany({
+        select: {
+            estoque: true,
+            preco: true,
+        }
+    })
+    const totalVendas = plantas.reduce((Acumulador, planta) => {
+        return Acumulador + (planta.preco * planta.estoque);
+    }, 0);
+    return {totalDeVasos: total._sum.estoque, valorTotalEmCentavos: totalVendas};
+}

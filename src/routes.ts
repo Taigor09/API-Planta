@@ -18,11 +18,14 @@ routes.delete("/users/:id", UserController.deleteUser);
 // CRUD de plantas
 routes.post("/plantas", PlantaController.createPlanta);
 routes.get("/plantas", PlantaController.findAllPlantas);
+
+// Rotas específicas de plantas
+routes.get("/plantas/estoque/valor-total", PlantaController.valorTotalEstoque);
+routes.post("/plantas/:id/venda", PlantaController.vendePlanta);
+
+// Rotas dinâmicas de plantas
 routes.get("/plantas/:id", PlantaController.findPlantaById);
 routes.patch("/plantas/:id", PlantaController.updatePlanta);
 routes.delete("/plantas/:id", PlantaController.deletePlanta);
-
-// Venda de plantas
-routes.post("/plantas/:id/venda", PlantaController.vendePlanta);
 
 export default routes;
