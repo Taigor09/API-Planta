@@ -22,4 +22,7 @@ routes.get("/plantas/:id", PlantaController.findPlantaById);
 routes.patch("/plantas/:id", PlantaController.updatePlanta);
 routes.delete("/plantas/:id", PlantaController.deletePlanta);
 
+// Venda de plantas
+routes.post("/plantas/:id/venda", PlantaController.vendePlanta);
+
 export default routes;

@@ -156,3 +156,38 @@ export const deletePlanta = async (req = request, res = response) => {
         return res.status(500).json({message: "Erro ao deletar planta"})
     }
 }
+
+export const vendePlanta = async (req = request, res = response) => {
+    try {
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({message: "Id inválido"})
+        }
+
+        const planta = await PlantaRepository.findPlantaById(id);
+        if (!planta) {
+            return res.status(404).json({message: "Planta não encontrada"})
+        }
+
+        const {quantidade} = req.body
+        if (!Number.isInteger(quantidade) || quantidade <= 0) {
+            return res.status(400).json({message: "Quantidade inválida"})
+        }
+
+        if (planta.estoque < quantidade) {
+            return res.status(400).json({message: "Estoque insuficiente para a venda"})
+        }
+
+        const venda = await PlantaRepository.venderPlanta(id, quantidade);
+        if (venda.count === 0) {
+            return res.status(400).json({message: "Estoque insuficiente para a venda"})
+        }
+
+        const plantaAtualizada = await PlantaRepository.findPlantaById(id);
+        return res.status(200).json(plantaAtualizada);
+    }
+    catch(error) {
+        console.error(error);
+        return res.status(500).json({message: "Erro ao vender planta"})
+    }
+}
