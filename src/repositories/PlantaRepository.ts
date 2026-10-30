@@ -77,3 +77,11 @@ export const totalVendas = async () => {
     }, 0);
     return {totalDeVasos: total._sum.estoque ?? 0, valorTotalEmCentavos: totalVendas};
 }
+
+export const findPlantasEsgotadas = async () => {
+    return await prisma.planta.findMany({
+        where: {
+            estoque: 0
+        }
+    });
+}

@@ -18,6 +18,7 @@ routes.post("/plantas", PlantaController.createPlanta);
 routes.get("/plantas", PlantaController.findAllPlantas);
 
 routes.get("/plantas/estoque/valor-total", PlantaController.valorTotalEstoque);
+routes.get("/plantas/esgotadas", PlantaController.findPlantasEsgotadas);
 routes.post("/plantas/:id/venda", PlantaController.vendePlanta);
 
 routes.get("/plantas/:id", PlantaController.findPlantaById);
